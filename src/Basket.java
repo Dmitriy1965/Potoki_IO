@@ -1,11 +1,12 @@
 import java.io.*;
 
-public class Basket {
+public class Basket implements Serializable {
+   private static final long serialVersionUID = 1L;
     private String[] products;
     private int[] prices;
     private int[] count;
 
-    public Basket() {
+       public Basket() {
     }
 
     public Basket(String[] products, int[] prices) {
@@ -32,39 +33,25 @@ public class Basket {
         System.out.println("Итого:   " + totalPrice);
     }
 
-    public void saveTxt(File textFile) {
-
-        try (FileWriter writer = new FileWriter(textFile, false)) {
-
-            for (int i = 0; i < count.length; i++) {
-                // запись всей строки
-                String s = Integer.toString(count[i]);
-                writer.write(s);
-                writer.append('\n');
-                writer.flush();
-            }
-        } catch (IOException ex) {
+    public void saveBin(File file) {
+// откроем выходной поток для записи в файл
+        try (FileOutputStream fos = new FileOutputStream(file);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+// запишем экземпляр класса в файл
+            oos.writeObject(this);
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
-
-    public void loadFromTxtFile(File textFile) {
-        //
-        if (textFile.exists()) {
-
-            try (BufferedReader reader = new BufferedReader(new FileReader(textFile))) {
-
-                String text;
-                int i = 0;
-                while ((text = reader.readLine()) != null) {
-                    //   читаем файл построчно
-                    count[i] = Integer.parseInt(text);
-                    System.out.println(text);
-                    i++;
-                }
-            } catch (IOException ex) {
-                System.out.println(ex.getMessage());
-            }
+    public static Basket loadFromBinFile(File file)  {
+        Basket basket = null;
+        try (FileInputStream fis = new FileInputStream(file);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+// десериализуем объект и скастим его в класс
+            basket = (Basket) ois.readObject();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
+        return basket;
     }
 }

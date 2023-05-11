@@ -3,26 +3,22 @@ import java.util.Scanner;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.io.IOException;
+import java.io.FileWriter;
+
 
 public class Main {
-    public static void main(String[] args) {
+        static String[] products = {" ", "Хлеб", "Яблоки", "Молоко"};
+        static int[] prices = {0, 100, 200, 300};
+        static File file = new File("basket.bin");
 
-        String[] products = {" ", "Хлеб", "Яблоки", "Молоко"};
-        int[] prices = {0, 100, 200, 300};
+        public static void main(String[] args) throws FileNotFoundException  {
 
-        File textFile = new File("basket.txt");
-
-        //            Basket basket = null;
-        Basket basket = new Basket(products, prices);
-
-//        if (basketFile.exists()) {
-//             basket = Basket.loadFromTxtFile(basketFile);
-//        } else {
-//            Basket basket = new Basket(products, prices);
-//        }
-
-        basket.loadFromTxtFile(textFile);
-
+        Basket basket = null;
+        if (file.exists()) {
+            basket = Basket.loadFromBinFile(file);
+        } else {
+            basket = new Basket(products, prices);
+        }
 
         Scanner scanner = new Scanner(System.in);
         System.out.println();
@@ -45,14 +41,11 @@ public class Main {
             productCount = Integer.parseInt(inputString[1]);
 
             // добавление покупок в корзину
-            basket.addToCart(productNumber,productCount);
- //           basket.saveTxt(productNumber,productCount);
-              basket.saveTxt(textFile);
-
+            basket.addToCart(productNumber, productCount);
+            basket.saveBin(file);
         }
-
         //.. .. вывод корзины
-            basket.printCart();
-
+        basket.printCart();
+//        basket.saveBin(file);
     }
 }
